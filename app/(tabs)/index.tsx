@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Task from '@/components/task';
 import { ThemedView } from '@/components/themed-view';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import {
   Text,
   View,
@@ -13,54 +14,53 @@ import {
 } from 'react-native';
 
 export default function HomeScreen() {
-  const [task, setTask] = useState<any>();
-  const [taskItems, setTaskItems] = useState<any>([]);
+  const [task, setTask] = useState<string>('');
+  const [taskItems, setTaskItems] = useState<string[]>([]);
 
   const handleAddTask = () => {
+    if (!task.trim()) return;
+
     Keyboard.dismiss();
     setTaskItems([...taskItems, task]);
-    setTask(null);
+    setTask('');
   };
 
-  const completeTask = (index: any) => {
-    let itemsCopy = [...taskItems];
+  const completeTask = (index: number) => {
+    const itemsCopy = [...taskItems];
     itemsCopy.splice(index, 1);
     setTaskItems(itemsCopy);
   };
 
   return (
     <ThemedView style={styles.container}>
-      {/* todays tast */}
-      <View style={styles.Taskwrapper}>
-        <Text style={styles.sectionTitle}>Todays Task</Text>
+      {/* Today's Tasks */}
+      <View style={styles.taskWrapper}>
+        <Text style={styles.sectionTitle}>Today's Tasks</Text>
 
         <View style={styles.items}>
-          {/* this is where the task will be */}
-          {taskItems.map((item: any, index: any) => {
-            return (
-              <TouchableOpacity key={index} onPress={() => completeTask(index)}>
-                <Task text={item} />
-              </TouchableOpacity>
-            );
-          })}
+          {taskItems.map((item, index) => (
+            <TouchableOpacity key={index} onPress={() => completeTask(index)}>
+              <Task text={item} />
+            </TouchableOpacity>
+          ))}
         </View>
       </View>
 
-      {/* write a task */}
+      {/* Add Task */}
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.writeTaskWrapper}
       >
         <TextInput
-          style={styles.input}
-          placeholder={'write a task'}
+          style={styles.inputField}
+          placeholder='Write a task'
           value={task}
-          onChangeText={(text) => setTask(text)}
+          onChangeText={setTask}
         />
 
-        <TouchableOpacity onPress={() => handleAddTask()}>
+        <TouchableOpacity onPress={handleAddTask}>
           <View style={styles.addWrapper}>
-            <Text style={styles.addText}>+</Text>
+            <MaterialIcons name='send' size={22} color='black' />
           </View>
         </TouchableOpacity>
       </KeyboardAvoidingView>
@@ -73,43 +73,49 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#E8EAED',
   },
-  Taskwrapper: {
-    padding: 80,
+
+  taskWrapper: {
+    paddingTop: 80,
     paddingHorizontal: 18,
   },
+
   sectionTitle: {
     fontSize: 24,
+    fontWeight: '600',
   },
+
   items: {
     marginTop: 30,
   },
+
   writeTaskWrapper: {
-    position: 'absolute',
-    bottom: 60,
     width: '100%',
     flexDirection: 'row',
-    justifyContent: 'space-around',
     alignItems: 'center',
+    paddingHorizontal: 20,
+    position: 'absolute',
+    bottom: 40,
   },
-  input: {
-    paddingVertical: 10,
-    paddingHorizontal: 15,
+
+  inputField: {
+    flex: 1,
     backgroundColor: '#FFF',
-    borderRadius: 60,
     borderColor: '#C0C0C0',
+    paddingHorizontal: 15,
+    paddingVertical: 12,
+    borderRadius: 30,
     borderWidth: 1,
-    width: 230,
+    marginRight: 10,
   },
+
   addWrapper: {
-    width: 90,
-    height: 50,
+    height: 55,
+    width: 55,
     backgroundColor: '#FFF',
-    borderRadius: 60,
+    borderColor: '#C0C0C0',
     justifyContent: 'center',
     alignItems: 'center',
-    borderColor: '#C0C0C0',
+    borderRadius: 27.5,
     borderWidth: 1,
   },
-  addText: {},
-  o: {},
 });
